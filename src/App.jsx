@@ -8,6 +8,10 @@ import GroupCreate from './pages/GroupCreate';
 import GroupDiagnosis from './pages/GroupDiagnosis';
 import GroupReport from './pages/GroupReport';
 import ChatConsultation from './pages/ChatConsultation';
+import DreamRecord from './pages/DreamRecord';
+import MindMap from './pages/MindMap';
+import GroupMissions from './pages/GroupMissions';
+import ContentLibrary from './pages/ContentLibrary';
 
 // Placeholder for ProtectedRoute
 const ProtectedRoute = ({ children }) => {
@@ -51,6 +55,26 @@ function App() {
           <Route path="/chat" element={
             <ProtectedRoute>
               <ChatConsultation />
+            </ProtectedRoute>
+          } />
+          <Route path="/dream" element={
+            <ProtectedRoute>
+              <DreamRecord />
+            </ProtectedRoute>
+          } />
+          <Route path="/mindmap" element={
+            <ProtectedRoute>
+              <MindMap />
+            </ProtectedRoute>
+          } />
+          <Route path="/group/missions" element={
+            <ProtectedRoute>
+              <GroupMissions />
+            </ProtectedRoute>
+          } />
+          <Route path="/content" element={
+            <ProtectedRoute>
+              <ContentLibrary />
             </ProtectedRoute>
           } />
           <Route path="/" element={
