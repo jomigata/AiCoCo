@@ -23,6 +23,7 @@ const Dashboard = () => {
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                         <h3 className="text-lg font-semibold mb-4">나의 심리 DNA</h3>
                         <p className="text-slate-500">프로파일링 결과가 여기에 표시됩니다.</p>
+                        <Button variant="outline" className="mt-4 w-full" onClick={() => window.location.href = '/group/report'}>리포트 보기 (예시)</Button>
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                         <h3 className="text-lg font-semibold mb-4">소속 그룹</h3>

@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import DailyRecord from './pages/DailyRecord';
 import GroupCreate from './pages/GroupCreate';
 import GroupDiagnosis from './pages/GroupDiagnosis';
+import GroupReport from './pages/GroupReport';
 
 // Placeholder for ProtectedRoute
 const ProtectedRoute = ({ children }) => {
@@ -39,6 +40,11 @@ function App() {
           <Route path="/group/diagnosis" element={
             <ProtectedRoute>
               <GroupDiagnosis />
+            </ProtectedRoute>
+          } />
+          <Route path="/group/report" element={
+            <ProtectedRoute>
+              <GroupReport />
             </ProtectedRoute>
           } />
           <Route path="/" element={
