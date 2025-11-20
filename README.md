@@ -1,16 +1,29 @@
-# React + Vite
+# WizCoCo - CoCo Ai (코코Ai)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Wise Counseling Companion - 지혜로운 상담 동반자**
 
-Currently, two official plugins are available:
+WizCoCo는 데이터와 공감을 기반으로 개인의 마음 건강과 관계의 성숙을 돕는 '내 손안의 AI 심리 상담사' 플랫폼입니다.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 프로젝트 개요
+- **비전**: 데이터와 공감을 기반으로 개인의 마음 건강과 관계의 성숙을 돕는 AI 심리 케어 플랫폼
+- **핵심 기능**:
+  - 개인 종합 프로파일링 및 데일리 마음 기록
+  - 그룹(가족, 연인, 팀) 심층 진단 및 관계 리포트
+  - AI 챗봇 '마음 친구 코코'
+  - 전문가 상담 연계
 
-## React Compiler
+## 🛠 기술 스택
+- **Frontend**: React, Vite, TailwindCSS, Framer Motion
+- **Backend**: Firebase (Auth, Firestore, Hosting)
+- **CI/CD**: GitHub Actions
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 📦 설치 및 실행
+```bash
+npm install
+npm run dev
+```
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🤝 팀 구성
+- 풀스택 개발자 2명
+- 웹 디자이너 2명
+- 심리상담가 2명
