@@ -27,7 +27,7 @@ const Dashboard = () => {
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                         <h3 className="text-lg font-semibold mb-4">소속 그룹</h3>
                         <p className="text-slate-500">참여 중인 그룹이 없습니다.</p>
-                        <Button variant="secondary" className="mt-4 w-full">그룹 만들기</Button>
+                        <Button variant="secondary" className="mt-4 w-full" onClick={() => window.location.href = '/group/create'}>그룹 만들기</Button>
                     </div>
                 </div>
             </div>
