@@ -12,6 +12,7 @@ import DreamRecord from './pages/DreamRecord';
 import MindMap from './pages/MindMap';
 import GroupMissions from './pages/GroupMissions';
 import ContentLibrary from './pages/ContentLibrary';
+import ExpertConnection from './pages/ExpertConnection';
 
 // Placeholder for ProtectedRoute
 const ProtectedRoute = ({ children }) => {
@@ -75,6 +76,11 @@ function App() {
           <Route path="/content" element={
             <ProtectedRoute>
               <ContentLibrary />
+            </ProtectedRoute>
+          } />
+          <Route path="/expert" element={
+            <ProtectedRoute>
+              <ExpertConnection />
             </ProtectedRoute>
           } />
           <Route path="/" element={
