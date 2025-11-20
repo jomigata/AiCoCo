@@ -44,7 +44,23 @@ const Signup = () => {
       await signup(formData.email, formData.password, formData.displayName);
       navigate('/onboarding');
     } catch (err) {
-      setError(err.message || 'Failed to create account');
+      let errorMessage = '회원가입에 실패했습니다.';
+      
+      if (err.code === 'auth/configuration-not-found') {
+        errorMessage = 'Firebase Authentication이 설정되지 않았습니다. 관리자에게 문의하세요.';
+      } else if (err.code === 'auth/email-already-in-use') {
+        errorMessage = '이미 사용 중인 이메일입니다.';
+      } else if (err.code === 'auth/invalid-email') {
+        errorMessage = '유효하지 않은 이메일 주소입니다.';
+      } else if (err.code === 'auth/weak-password') {
+        errorMessage = '비밀번호가 너무 약합니다. 더 강한 비밀번호를 사용하세요.';
+      } else if (err.code === 'auth/operation-not-allowed') {
+        errorMessage = '이메일/비밀번호 인증이 활성화되지 않았습니다.';
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

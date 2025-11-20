@@ -22,7 +22,23 @@ const Login = () => {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.message || 'Failed to log in');
+      let errorMessage = '로그인에 실패했습니다.';
+      
+      if (err.code === 'auth/configuration-not-found') {
+        errorMessage = 'Firebase Authentication이 설정되지 않았습니다. 관리자에게 문의하세요.';
+      } else if (err.code === 'auth/user-not-found') {
+        errorMessage = '등록되지 않은 이메일입니다.';
+      } else if (err.code === 'auth/wrong-password') {
+        errorMessage = '비밀번호가 올바르지 않습니다.';
+      } else if (err.code === 'auth/invalid-email') {
+        errorMessage = '유효하지 않은 이메일 주소입니다.';
+      } else if (err.code === 'auth/user-disabled') {
+        errorMessage = '비활성화된 계정입니다.';
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
