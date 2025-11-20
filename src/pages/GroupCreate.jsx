@@ -1,166 +1,139 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addDoc, collection, doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { auth, db } from '../services/firebase';
+import { collection, addDoc } from 'firebase/firestore';
 import Button from '../components/Button';
 import Input from '../components/Input';
-import { Users, Heart, Briefcase, Home } from 'lucide-react';
-
-const groupTypes = [
-    { id: 'family', label: '가족', icon: Home, description: '서로를 더 깊이 이해하고 싶은 가족' },
-    { id: 'couple', label: '연인/부부', icon: Heart, description: '사랑을 키워가는 커플' },
-    { id: 'team', label: '팀/동료', icon: Briefcase, description: '함께 성장하는 팀' },
-    { id: 'friends', label: '친구', icon: Users, description: '소중한 우정을 나누는 친구' },
-];
-
-const groupGoals = {
-    family: ['소통 증진', '갈등 해결', '유대감 강화', '서로 이해하기'],
-    couple: ['신뢰 쌓기', '대화법 개선', '미래 계획', '친밀감 증진'],
-    team: ['협업 능력 향상', '팀워크 강화', '스트레스 관리', '목표 달성'],
-    friends: ['추억 만들기', '고민 나누기', '서로 응원하기', '취미 공유'],
-};
+import { ArrowLeft, Users, Heart, Briefcase, UserPlus, Target } from 'lucide-react';
 
 const GroupCreate = () => {
     const navigate = useNavigate();
-    const [step, setStep] = useState(1);
-    const [formData, setFormData] = useState({
-        name: '',
-        type: '',
-        goals: [],
-        inviteEmails: ''
-    });
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const user = auth.currentUser;
+    const [groupName, setGroupName] = useState('');
+    const [groupType, setGroupType] = useState('');
+    const [goal, setGoal] = useState('');
+    const [inviteEmails, setInviteEmails] = useState('');
 
-    const handleTypeSelect = (typeId) => {
-        setFormData(prev => ({ ...prev, type: typeId, goals: [] }));
-        setStep(2);
-    };
+    const groupTypes = [
+        { value: 'family', label: '가족', icon: Heart, color: 'from-rose-500 to-pink-500', desc: '가족 간의 이해와 소통' },
+        { value: 'couple', label: '연인/부부', icon: Heart, color: 'from-red-500 to-rose-500', desc: '더 깊은 관계를 위해' },
+        { value: 'team', label: '회사 팀', icon: Briefcase, color: 'from-blue-500 to-indigo-500', desc: '팀워크 향상' },
+        { value: 'friends', label: '친구', icon: Users, color: 'from-green-500 to-teal-500', desc: '우정을 더욱 단단하게' },
+    ];
 
-    const handleGoalToggle = (goal) => {
-        setFormData(prev => {
-            const newGoals = prev.goals.includes(goal)
-                ? prev.goals.filter(g => g !== goal)
-                : [...prev.goals, goal];
-            return { ...prev, goals: newGoals };
-        });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!formData.name) return alert('그룹 이름을 입력해주세요.');
-
-        setIsSubmitting(true);
+    const handleCreate = async () => {
         try {
-            const user = auth.currentUser;
-            if (!user) throw new Error('로그인이 필요합니다.');
-
-            // 1. Create Group Document
-            const groupRef = await addDoc(collection(db, 'groups'), {
-                name: formData.name,
-                type: formData.type,
-                goals: formData.goals,
-                createdBy: user.uid,
-                createdAt: new Date().toISOString(),
+            const newGroup = await addDoc(collection(db, 'groups'), {
+                name: groupName,
+                type: groupType,
+                goal: goal,
                 members: [user.uid],
-                inviteEmails: formData.inviteEmails.split(',').map(e => e.trim()).filter(e => e)
+                createdBy: user.uid,
+                createdAt: new Date(),
             });
-
-            // 2. Update User Document with new Group ID
-            await updateDoc(doc(db, 'users', user.uid), {
-                groupIds: arrayUnion(groupRef.id)
-            });
-
             navigate('/');
         } catch (error) {
-            console.error(error);
-            alert('그룹 생성 실패: ' + error.message);
-        } finally {
-            setIsSubmitting(false);
+            console.error('Error creating group:', error);
         }
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 p-4 sm:p-8 flex items-center justify-center">
-            <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8">
-                <h1 className="text-3xl font-bold text-slate-900 mb-2 text-center">새로운 그룹 만들기</h1>
-                <p className="text-slate-500 text-center mb-8">함께 성장할 소중한 사람들을 초대하세요.</p>
+        <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 relative overflow-hidden">
+            <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary-100 rounded-full blur-3xl opacity-30"></div>
+            <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-secondary-100 rounded-full blur-3xl opacity-30"></div>
 
-                {step === 1 && (
-                    <div className="space-y-6">
-                        <h2 className="text-xl font-semibold text-slate-800">어떤 그룹을 만드나요?</h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {groupTypes.map((type) => {
-                                const Icon = type.icon;
-                                return (
-                                    <button
-                                        key={type.id}
-                                        onClick={() => handleTypeSelect(type.id)}
-                                        className="flex flex-col items-center p-6 border-2 border-slate-100 rounded-xl hover:border-indigo-500 hover:bg-indigo-50 transition-all group text-center"
-                                    >
-                                        <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-white text-slate-600 group-hover:text-indigo-600">
-                                            <Icon className="w-6 h-6" />
-                                        </div>
-                                        <h3 className="font-bold text-slate-900 mb-1">{type.label}</h3>
-                                        <p className="text-sm text-slate-500">{type.description}</p>
-                                    </button>
-                                );
-                            })}
-                        </div>
+            <div className="relative z-10 max-w-3xl mx-auto p-6 sm:p-12">
+                {/* Header */}
+                <div className="flex items-center mb-8">
+                    <button onClick={() => navigate(-1)} className="mr-4 p-2 hover:bg-white/50 rounded-full transition-colors">
+                        <ArrowLeft className="w-6 h-6 text-slate-600" />
+                    </button>
+                    <div>
+                        <h1 className="text-3xl font-bold text-slate-900">그룹 만들기</h1>
+                        <p className="text-slate-500 mt-1">소중한 사람들과 함께 성장하는 여정을 시작하세요</p>
                     </div>
-                )}
+                </div>
 
-                {step === 2 && (
-                    <form onSubmit={handleSubmit} className="space-y-8">
-                        <div className="space-y-4">
-                            <Input
-                                label="그룹 이름"
-                                placeholder="예: 우리 가족 사랑해, 최강 마케팅팀"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                required
-                            />
-                        </div>
+                {/* Group Type Selection */}
+                <div className="glass-panel p-8 rounded-3xl mb-6 animate-fade-in">
+                    <div className="flex items-center gap-2 mb-6">
+                        <Users className="w-5 h-5 text-primary-500" />
+                        <h3 className="text-lg font-bold text-slate-900">그룹 유형을 선택하세요</h3>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {groupTypes.map((type) => {
+                            const Icon = type.icon;
+                            return (
+                                <button
+                                    key={type.value}
+                                    onClick={() => setGroupType(type.value)}
+                                    className={`p-6 rounded-2xl border-2 transition-all duration-200 text-left ${groupType === type.value
+                                            ? 'border-primary-500 bg-primary-50 shadow-lg transform scale-[1.02]'
+                                            : 'border-slate-200 bg-white hover:border-slate-300'
+                                        }`}
+                                >
+                                    <div className={`w-14 h-14 bg-gradient-to-br ${type.color} rounded-2xl flex items-center justify-center mb-4 shadow-md`}>
+                                        <Icon className="w-7 h-7 text-white" />
+                                    </div>
+                                    <h4 className="font-bold text-slate-900 mb-1">{type.label}</h4>
+                                    <p className="text-sm text-slate-500">{type.desc}</p>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
 
-                        <div className="space-y-4">
-                            <label className="block text-sm font-medium text-slate-700">
-                                우리 그룹의 목표 (복수 선택 가능)
-                            </label>
-                            <div className="flex flex-wrap gap-2">
-                                {groupGoals[formData.type]?.map((goal) => (
-                                    <button
-                                        key={goal}
-                                        type="button"
-                                        onClick={() => handleGoalToggle(goal)}
-                                        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${formData.goals.includes(goal)
-                                                ? 'bg-indigo-600 text-white'
-                                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                                            }`}
-                                    >
-                                        {goal}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                {/* Group Details */}
+                <div className="glass-panel p-8 rounded-3xl mb-6 animate-fade-in space-y-6">
+                    <div>
+                        <label className="flex items-center gap-2 mb-3 font-medium text-slate-700">
+                            <Users className="w-4 h-4 text-primary-500" />
+                            그룹 이름
+                        </label>
+                        <Input
+                            type="text"
+                            value={groupName}
+                            onChange={(e) => setGroupName(e.target.value)}
+                            placeholder="예: 우리 가족, 행복한 부부, A팀"
+                        />
+                    </div>
 
-                        <div className="space-y-4">
-                            <Input
-                                label="멤버 초대 (이메일)"
-                                placeholder="쉼표(,)로 구분하여 입력 (예: mom@example.com, dad@example.com)"
-                                value={formData.inviteEmails}
-                                onChange={(e) => setFormData({ ...formData, inviteEmails: e.target.value })}
-                            />
-                        </div>
+                    <div>
+                        <label className="flex items-center gap-2 mb-3 font-medium text-slate-700">
+                            <Target className="w-4 h-4 text-primary-500" />
+                            그룹 목표
+                        </label>
+                        <textarea
+                            value={goal}
+                            onChange={(e) => setGoal(e.target.value)}
+                            placeholder="이 그룹을 통해 이루고 싶은 목표를 적어주세요..."
+                            className="w-full h-32 p-4 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none text-slate-800 placeholder-slate-400"
+                        />
+                    </div>
 
-                        <div className="flex gap-4">
-                            <Button type="button" variant="ghost" onClick={() => setStep(1)} className="flex-1">
-                                이전
-                            </Button>
-                            <Button type="submit" className="flex-1" isLoading={isSubmitting}>
-                                그룹 생성하기
-                            </Button>
-                        </div>
-                    </form>
-                )}
+                    <div>
+                        <label className="flex items-center gap-2 mb-3 font-medium text-slate-700">
+                            <UserPlus className="w-4 h-4 text-primary-500" />
+                            멤버 초대 (이메일)
+                        </label>
+                        <Input
+                            type="text"
+                            value={inviteEmails}
+                            onChange={(e) => setInviteEmails(e.target.value)}
+                            placeholder="example@email.com, member@email.com (쉼표로 구분)"
+                        />
+                        <p className="text-xs text-slate-500 mt-2">💡 나중에도 멤버를 초대할 수 있습니다</p>
+                    </div>
+                </div>
+
+                {/* Create Button */}
+                <Button
+                    onClick={handleCreate}
+                    disabled={!groupName || !groupType}
+                    className="w-full py-4 text-lg shadow-lg shadow-primary-500/20"
+                >
+                    그룹 생성하기
+                </Button>
             </div>
         </div>
     );
