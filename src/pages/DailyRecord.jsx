@@ -1,106 +1,117 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addDoc, collection } from 'firebase/firestore';
 import { auth, db } from '../services/firebase';
+import { collection, addDoc } from 'firebase/firestore';
 import Button from '../components/Button';
-import { Smile, Frown, Meh, CloudRain, Sun, Zap } from 'lucide-react';
-
-const emotions = [
-    { id: 'happy', label: '행복', icon: Smile, color: 'text-yellow-500 bg-yellow-50 border-yellow-200' },
-    { id: 'good', label: '좋음', icon: Sun, color: 'text-orange-500 bg-orange-50 border-orange-200' },
-    { id: 'soso', label: '그저 그럼', icon: Meh, color: 'text-slate-500 bg-slate-50 border-slate-200' },
-    { id: 'sad', label: '슬픔', icon: CloudRain, color: 'text-blue-500 bg-blue-50 border-blue-200' },
-    { id: 'bad', label: '나쁨', icon: Frown, color: 'text-gray-500 bg-gray-50 border-gray-200' },
-    { id: 'angry', label: '화남', icon: Zap, color: 'text-red-500 bg-red-50 border-red-200' },
-];
+import { ArrowLeft, Save, Sparkles } from 'lucide-react';
 
 const DailyRecord = () => {
     const navigate = useNavigate();
-    const [selectedEmotion, setSelectedEmotion] = useState(null);
-    const [note, setNote] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const user = auth.currentUser;
+    const [selectedEmotion, setSelectedEmotion] = useState('');
+    const [diary, setDiary] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!selectedEmotion) {
-            alert('오늘의 기분을 선택해주세요.');
-            return;
-        }
+    const emotions = [
+        { emoji: '😊', label: '기쁨', value: 'happy', color: 'bg-yellow-50 hover:bg-yellow-100 border-yellow-300' },
+        { emoji: '😢', label: '슬픔', value: 'sad', color: 'bg-blue-50 hover:bg-blue-100 border-blue-300' },
+        { emoji: '😠', label: '화남', value: 'angry', color: 'bg-red-50 hover:bg-red-100 border-red-300' },
+        { emoji: '😰', label: '불안', value: 'anxious', color: 'bg-purple-50 hover:bg-purple-100 border-purple-300' },
+        { emoji: '😌', label: '평온', value: 'calm', color: 'bg-green-50 hover:bg-green-100 border-green-300' },
+        { emoji: '🤔', label: '복잡함', value: 'confused', color: 'bg-slate-50 hover:bg-slate-100 border-slate-300' },
+    ];
 
-        setIsSubmitting(true);
+    const handleSave = async () => {
+        if (!selectedEmotion || !diary.trim()) return;
+
+        setIsSaving(true);
         try {
-            const user = auth.currentUser;
-            if (!user) throw new Error('로그인이 필요합니다.');
-
             await addDoc(collection(db, 'records'), {
                 userId: user.uid,
                 emotion: selectedEmotion,
-                note: note,
-                createdAt: new Date().toISOString(),
-                date: new Date().toLocaleDateString()
+                diary: diary,
+                timestamp: new Date(),
             });
-
             navigate('/');
         } catch (error) {
-            console.error(error);
-            alert('기록 저장 실패: ' + error.message);
+            console.error('Error saving record:', error);
         } finally {
-            setIsSubmitting(false);
+            setIsSaving(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 p-4 sm:p-8">
-            <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sm:p-10">
-                <h1 className="text-2xl font-bold text-slate-900 mb-8 text-center">오늘의 마음 기록</h1>
+        <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-72 h-72 bg-secondary-100 rounded-full blur-3xl opacity-50 -z-10"></div>
 
-                <form onSubmit={handleSubmit} className="space-y-8">
-                    {/* Emotion Selector */}
-                    <div className="space-y-4">
-                        <label className="block text-sm font-medium text-slate-700 text-center">
-                            지금 기분이 어떠신가요?
-                        </label>
-                        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-                            {emotions.map((emotion) => {
-                                const Icon = emotion.icon;
-                                const isSelected = selectedEmotion === emotion.id;
-                                return (
-                                    <button
-                                        key={emotion.id}
-                                        type="button"
-                                        onClick={() => setSelectedEmotion(emotion.id)}
-                                        className={`
-                      flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all duration-200
-                      ${isSelected ? emotion.color + ' ring-2 ring-offset-2 ring-indigo-500' : 'border-slate-100 hover:bg-slate-50 text-slate-400'}
-                    `}
-                                    >
-                                        <Icon className={`w-8 h-8 mb-2 ${isSelected ? 'opacity-100' : 'opacity-70'}`} />
-                                        <span className={`text-xs font-medium ${isSelected ? 'opacity-100' : 'opacity-70'}`}>
-                                            {emotion.label}
-                                        </span>
-                                    </button>
-                                );
-                            })}
+            <div className="max-w-3xl mx-auto p-6 sm:p-12">
+                {/* Header */}
+                <div className="flex items-center mb-8">
+                    <button onClick={() => navigate(-1)} className="mr-4 p-2 hover:bg-white/50 rounded-full transition-colors">
+                        <ArrowLeft className="w-6 h-6 text-slate-600" />
+                    </button>
+                    <div>
+                        <div className="flex items-center gap-2 mb-1">
+                            <span className="bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary-600 border border-primary-100 shadow-sm">
+                                {new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}
+                            </span>
                         </div>
+                        <h1 className="text-3xl font-bold text-slate-900">오늘의 마음 기록</h1>
+                        <p className="text-slate-500 mt-1">지금 이 순간, 당신의 감정을 솔직하게 기록해보세요</p>
                     </div>
+                </div>
 
-                    {/* Note Area */}
-                    <div className="space-y-4">
-                        <label className="block text-sm font-medium text-slate-700">
-                            오늘 하루는 어땠나요? (선택)
-                        </label>
-                        <textarea
-                            value={note}
-                            onChange={(e) => setNote(e.target.value)}
-                            placeholder="짧은 일기나 감정을 자유롭게 적어주세요..."
-                            className="w-full h-32 p-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none transition-all"
-                        />
+                {/* Emotion Selector */}
+                <div className="glass-panel p-8 rounded-3xl mb-6">
+                    <div className="flex items-center gap-2 mb-6">
+                        <Sparkles className="w-5 h-5 text-primary-500" />
+                        <h3 className="text-lg font-bold text-slate-900">지금 기분이 어떠신가요?</h3>
                     </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        {emotions.map((emotion) => (
+                            <button
+                                key={emotion.value}
+                                onClick={() => setSelectedEmotion(emotion.value)}
+                                className={`p-6 rounded-2xl border-2 transition-all duration-200 ${selectedEmotion === emotion.value
+                                        ? `${emotion.color} transform scale-105 shadow-lg`
+                                        : 'bg-white border-slate-200 hover:border-slate-300'
+                                    }`}
+                            >
+                                <div className="text-5xl mb-2">{emotion.emoji}</div>
+                                <div className="text-sm font-medium text-slate-700">{emotion.label}</div>
+                            </button>
+                        ))}
+                    </div>
+                </div>
 
-                    <Button type="submit" className="w-full" size="lg" isLoading={isSubmitting}>
-                        기록 저장하기
-                    </Button>
-                </form>
+                {/* Diary */}
+                <div className="glass-panel p-8 rounded-3xl mb-8">
+                    <div className="flex items-center gap-2 mb-6">
+                        <Sparkles className="w-5 h-5 text-primary-500" />
+                        <h3 className="text-lg font-bold text-slate-900">오늘 하루를 돌아보며</h3>
+                    </div>
+                    <textarea
+                        value={diary}
+                        onChange={(e) => setDiary(e.target.value)}
+                        placeholder="오늘 겪었던 일, 떠오르는 생각, 마음속 이야기를 자유롭게 적어보세요..."
+                        className="w-full h-64 p-4 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none text-slate-800 placeholder-slate-400"
+                    />
+                    <div className="mt-4 flex justify-between items-center text-sm text-slate-500">
+                        <span>{diary.length} / 2000자</span>
+                        <span className="text-xs">💡 작성한 내용은 안전하게 보호됩니다</span>
+                    </div>
+                </div>
+
+                {/* Save Button */}
+                <Button
+                    onClick={handleSave}
+                    disabled={!selectedEmotion || !diary.trim()}
+                    isLoading={isSaving}
+                    className="w-full py-4 text-lg shadow-lg shadow-primary-500/20"
+                >
+                    <Save className="w-5 h-5 mr-2" />
+                    기록 저장하기
+                </Button>
             </div>
         </div>
     );
