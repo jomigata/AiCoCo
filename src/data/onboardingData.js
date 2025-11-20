@@ -87,3 +87,14 @@ export const onboardingQuestions = [
         ]
     }
 ];
+
+// Flatten for compatibility with Onboarding.jsx
+export const onboardingData = onboardingQuestions.flatMap(section =>
+    section.questions.map(q => ({
+        id: q.id,
+        category: section.category,
+        question: q.text,
+        options: q.options
+    }))
+);
+
