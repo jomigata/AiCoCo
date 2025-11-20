@@ -1,39 +1,96 @@
 {
-    "hosting": {
-        "public": "dist",
-        "ignore": [
-            "firebase.json",
-            "**/.*",
-            "**/node_modules/**"
-        ],
-        "rewrites": [
-            {
-                "source": "**",
-                "destination": "/index.html"
-            }
-        ],
+  "hosting": {
+    "public": "out",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "**/*.map",
+      "**/docs/**",
+      "**/scripts/**",
+      "**/prisma/**",
+      "**/psych-test/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/tests/mbti",
+        "destination": "/tests/mbti/index.html"
+      },
+      {
+        "source": "/tests/mbti_pro",
+        "destination": "/tests/mbti_pro/index.html"
+      },
+      {
+        "source": "/tests/group_mbti",
+        "destination": "/tests/group_mbti/index.html"
+      },
+      {
+        "source": "/tests/inside-mbti",
+        "destination": "/tests/inside-mbti/index.html"
+      },
+      {
+        "source": "/tests/enneagram",
+        "destination": "/tests/enneagram/index.html"
+      },
+      {
+        "source": "/tests/ego-ok",
+        "destination": "/tests/ego-ok/index.html"
+      },
+      {
+        "source": "/admin/**",
+        "destination": "/admin/index.html"
+      },
+      {
+        "source": "/mypage/**",
+        "destination": "/mypage/index.html"
+      },
+      {
+        "source": "/results/**",
+        "destination": "/results/index.html"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "cleanUrls": true,
+    "trailingSlash": true,
+    "headers": [
+      {
+        "source": "**/*.@(js|css)",
         "headers": [
-            {
-                "source": "**/*.@(js|css)",
-                "headers": [
-                    {
-                        "key": "Cache-Control",
-                        "value": "max-age=31536000"
-                    }
-                ]
-            },
-            {
-                "source": "**/*.@(jpg|jpeg|gif|png|svg|webp|ico)",
-                "headers": [
-                    {
-                        "key": "Cache-Control",
-                        "value": "max-age=31536000"
-                    }
-                ]
-            }
+          {
+            "key": "Cache-Control",
+            "value": "max-age=31536000"
+          }
         ]
-    },
-    "firestore": {
-        "rules": "firestore.rules"
-    }
-}
+      },
+      {
+        "source": "**/*.@(jpg|jpeg|gif|png|svg|webp)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=31536000"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(woff|woff2|ttf|eot)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=31536000"
+          }
+        ]
+      }
+    ]
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs18"
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+} 
