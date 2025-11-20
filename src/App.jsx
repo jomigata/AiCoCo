@@ -3,6 +3,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
+import DailyRecord from './pages/DailyRecord';
 
 // Placeholder for ProtectedRoute
 const ProtectedRoute = ({ children }) => {
@@ -21,6 +22,11 @@ function App() {
           <Route path="/onboarding" element={
             <ProtectedRoute>
               <Onboarding />
+            </ProtectedRoute>
+          } />
+          <Route path="/record" element={
+            <ProtectedRoute>
+              <DailyRecord />
             </ProtectedRoute>
           } />
           <Route path="/" element={

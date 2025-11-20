@@ -18,7 +18,7 @@ const Dashboard = () => {
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                         <h3 className="text-lg font-semibold mb-4">오늘의 마음 기록</h3>
                         <p className="text-slate-500">아직 기록된 내용이 없습니다.</p>
-                        <Button className="mt-4 w-full">기록하기</Button>
+                        <Button className="mt-4 w-full" onClick={() => window.location.href = '/record'}>기록하기</Button>
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                         <h3 className="text-lg font-semibold mb-4">나의 심리 DNA</h3>
