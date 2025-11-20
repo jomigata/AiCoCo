@@ -47,7 +47,7 @@ const Signup = () => {
       let errorMessage = '회원가입에 실패했습니다.';
       
       if (err.code === 'auth/configuration-not-found') {
-        errorMessage = 'Firebase Authentication이 설정되지 않았습니다. 관리자에게 문의하세요.';
+        errorMessage = 'Firebase Authentication이 설정되지 않았습니다.\n\n해결 방법:\n1. Firebase Console 접속: https://console.firebase.google.com/project/aicoco-5f8e6/authentication\n2. "Sign-in method" 탭에서 "Email/Password" 활성화\n3. 페이지를 새로고침하고 다시 시도하세요.';
       } else if (err.code === 'auth/email-already-in-use') {
         errorMessage = '이미 사용 중인 이메일입니다.';
       } else if (err.code === 'auth/invalid-email') {
@@ -85,8 +85,20 @@ const Signup = () => {
           <h2 className="text-2xl font-semibold text-gray-900 mb-6">회원가입</h2>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm whitespace-pre-line">
               {error}
+              {error.includes('Firebase Authentication이 설정되지 않았습니다') && (
+                <div className="mt-3 pt-3 border-t border-red-200">
+                  <a 
+                    href="https://console.firebase.google.com/project/aicoco-5f8e6/authentication/providers" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-indigo-600 hover:text-indigo-700 underline font-medium"
+                  >
+                    → Firebase Console에서 바로 설정하기
+                  </a>
+                </div>
+              )}
             </div>
           )}
 
