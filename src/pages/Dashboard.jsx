@@ -12,7 +12,10 @@ const Dashboard = () => {
             <div className="max-w-7xl mx-auto">
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-3xl font-bold text-slate-900">나의 대시보드</h1>
-                    <Button variant="outline" onClick={handleLogout}>로그아웃</Button>
+                    <div className="flex gap-2">
+                        <Button onClick={() => window.location.href = '/chat'}>CoCo 상담하기</Button>
+                        <Button variant="outline" onClick={handleLogout}>로그아웃</Button>
+                    </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
