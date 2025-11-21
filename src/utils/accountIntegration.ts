@@ -7,7 +7,8 @@ import {
   linkWithCredential,
   EmailAuthProvider,
   updateProfile,
-  sendEmailVerification
+  sendEmailVerification,
+  browserPopupRedirectResolver
 } from 'firebase/auth';
 import { signIn } from 'next-auth/react';
 import { UserAccountManager } from './userAccountManager';
@@ -259,7 +260,13 @@ export class AccountIntegrationManager {
     try {
       const { auth } = initializeFirebase();
       const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
+
+      // 팝업이 바로 닫히는 문제를 방지하기 위해 계정 선택 화면을 강제로 표시
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
+
+      const result = await signInWithPopup(auth, provider, browserPopupRedirectResolver);
 
       // 사용자 계정 관리 시스템에 등록/업데이트
       const userAccount = UserAccountManager.createOrUpdateUser(
