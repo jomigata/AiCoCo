@@ -453,6 +453,16 @@ async function monitorActionsStatus(commitHash) {
           }
         }
       } catch (error) {
+        if (error.message === 'NOT_FOUND_OR_PRIVATE') {
+          log('⚠️ GitHub Actions 상태를 자동으로 확인할 수 없습니다.', 'yellow');
+          log('   (비공개 저장소이거나 아직 워크플로우가 생성되지 않았을 수 있습니다)', 'yellow');
+          log('🌐 아래 링크에서 직접 확인해주세요:', 'cyan');
+          log(`   https://github.com/jomigata/AiCoCo/actions`, 'cyan');
+          clearInterval(interval);
+          resolve();
+          return;
+        }
+
         // API 호출 실패는 조용히 무시 (네트워크 문제 등)
         if (checkCount % 4 === 0) { // 2분마다 한 번만 경고
           log(`⚠️ Actions 상태 확인 중 오류 (재시도 중...): ${error.message}`, 'yellow');
@@ -512,6 +522,9 @@ function checkWorkflowStatus(commitHash) {
             } else {
               resolve(null); // 아직 워크플로우가 시작되지 않음
             }
+          } else if (res.statusCode === 404) {
+            // Private Repo or Not Found
+            reject(new Error('NOT_FOUND_OR_PRIVATE'));
           } else if (res.statusCode === 403) {
             // API rate limit 또는 인증 필요
             reject(new Error('API rate limit 또는 인증이 필요합니다'));
