@@ -19,13 +19,13 @@ const nextConfig = {
     NEXTAUTH_URL: process.env.NEXTAUTH_URL || 'https://aicoco-5f8e6.web.app',
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || 'your-nextauth-secret-key-at-least-32-chars-production',
     // Firebase 환경변수 (빌드 시점에 주입) - 실제 값으로 설정
-    NEXT_PUBLIC_FIREBASE_API_KEY: 'AIzaSyB2MN-mqyTZAPHd6QMSjzXILPWs-tkPheg',
+    NEXT_PUBLIC_FIREBASE_API_KEY: 'AIzaSyB2HW-mqyTZAPMd5QWSjZkILPWa-tkPheg',
     NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: 'aicoco-5f8e6.firebaseapp.com',
     NEXT_PUBLIC_FIREBASE_PROJECT_ID: 'aicoco-5f8e6',
     NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: 'aicoco-5f8e6.firebasestorage.app',
     NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: '563549872890',
-    NEXT_PUBLIC_FIREBASE_APP_ID: '1:563549872890:web:cc0a08b819a4b728ed9f43',
-    NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: 'G-W19YNVMJDV',
+    NEXT_PUBLIC_FIREBASE_APP_ID: '1:563549872890:web:cc0a085819a4b728ed9f43',
+    NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: 'G-W19YRVM3DV',
   },
 
   // 웹팩 설정: 서버 전용 모듈만 제외
