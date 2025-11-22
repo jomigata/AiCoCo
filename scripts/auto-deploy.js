@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * 🚀 WizCoCo 완전 자동화 배포 스크립트
+ * 🚀 AiCoCo 완전 자동화 배포 스크립트
  * Cursor 에이전트가 사용자 개입 없이 자동으로 실행
  * 
  * 30년 경력 전문가 팀 협업으로 개발:
@@ -222,7 +222,7 @@ function generateCommitMessage() {
 
 // 완전 자동화된 배포 프로세스 (강화)
 async function autoDeploy() {
-  log('🚀 WizCoCo 완전 자동화 배포 시작!', 'bright');
+  log('🚀 AiCoCo 완전 자동화 배포 시작!', 'bright');
   log('=====================================', 'blue');
 
   try {
@@ -473,7 +473,7 @@ async function monitorActionsStatus(commitHash) {
         clearInterval(interval);
         log('⏰ 자동 모니터링 시간 종료', 'yellow');
         log('🌐 Actions 페이지에서 수동으로 확인하세요:', 'cyan');
-        log(`   https://github.com/jomigata/wiz-coco/actions/runs?query=sha%3A${commitHash}`, 'cyan');
+        log(`   https://github.com/jomigata/AiCoCo/actions/runs?query=sha%3A${commitHash}`, 'cyan');
         resolve();
       }
     }, 30000); // 30초마다 상태 확인
@@ -494,7 +494,7 @@ function checkWorkflowStatus(commitHash) {
       path: apiUrl,
       method: 'GET',
       headers: {
-        'User-Agent': 'WizCoCo-Deploy-Script',
+        'User-Agent': 'AiCoCo-Deploy-Script',
         'Accept': 'application/vnd.github.v3+json'
       }
     };
@@ -560,7 +560,7 @@ async function waitForDeployment(commitHash) {
     }).trim();
   }
 
-  const latestRunUrl = `https://github.com/jomigata/wiz-coco/actions/runs?query=sha%3A${commitHash}`;
+  const latestRunUrl = `https://github.com/jomigata/AiCoCo/actions/runs?query=sha%3A${commitHash}`;
 
   log('⏳ GitHub Actions 실행 상태 모니터링 시작...', 'yellow');
   log(`🌐 최신 실행 확인: ${latestRunUrl}`, 'cyan');

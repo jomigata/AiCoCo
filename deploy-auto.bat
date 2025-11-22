@@ -1,7 +1,7 @@
 @echo off
 chcp 65001 >nul
 echo ========================================
-echo 🚀 WizCoCo 완전 자동화 배포 시작
+echo 🚀 AiCoCo 완전 자동화 배포 시작
 echo ========================================
 
 echo.
@@ -25,7 +25,7 @@ if %ERRORLEVEL% EQU 0 (
     echo.
     echo 🎉 자동 배포가 성공적으로 완료되었습니다!
     echo 🌐 GitHub Actions가 자동으로 실행됩니다
-    echo 📊 상태 확인: https://github.com/jomigata/wiz-coco/actions
+    echo 📊 상태 확인: https://github.com/jomigata/AiCoCo/actions
 ) else (
     echo.
     echo ❌ 자동 배포 중 오류가 발생했습니다

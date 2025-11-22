@@ -2,19 +2,15 @@
 
 ## ✅ 완료된 작업 (Completed Work)
 
-### 1. Firebase API Key 및 설정 수정 (Fixed Firebase Configuration)
-- **문제 원인**: `.env.local` 및 `next.config.js`에 설정된 Firebase API Key, App ID, Measurement ID가 실제 프로젝트 설정과 일치하지 않아 인증 오류가 발생함.
-- **해결책**: 사용자로부터 제공받은 올바른 Firebase 설정 값으로 모든 관련 파일을 업데이트함.
-  - `apiKey`: `AIzaSyB2HW...` 로 수정
-  - `appId`: `...58...` 로 수정
-  - `measurementId`: `...RVM3DV` 로 수정
+### 1. 프로젝트 마이그레이션 (Project Migration: WizCoCo -> AiCoCo)
+- **작업 내용**: 기존 `wiz-coco` 프로젝트에서 가져온 코드베이스 내에 남아있는 이전 프로젝트 참조를 모두 `aicoco-5f8e6`로 업데이트했습니다.
 - **수정된 파일**:
-  - `c:\AiCoCo\.env.local`
-  - `c:\AiCoCo\next.config.js`
+  - `deploy-auto.bat`: 스크립트 제목 및 GitHub Actions 링크 수정
+  - `scripts/auto-deploy.js`: 스크립트 제목, User-Agent, GitHub Actions 링크 수정
+  - `scripts/setup-github-secrets.js`: 예시 코드 내 프로젝트 ID 및 도메인 수정
 
-### 2. 팝업 강제 종료 방지 (Prevent Popup Auto-Close)
-- 이전 작업에서 적용된 `prompt: 'select_account'` 및 `browserPopupRedirectResolver` 설정은 그대로 유지됨.
-- 올바른 API Key가 적용되었으므로, 이제 팝업이 정상적으로 작동하고 인증이 진행될 것으로 예상됨.
+### 2. Firebase 설정 최적화 (Firebase Config Optimization)
+- 이전 단계에서 `.env.local` 및 `next.config.js`의 Firebase 설정 값을 올바른 값(`aicoco-5f8e6`)으로 모두 수정 완료했습니다.
 
 ---
 
@@ -22,8 +18,8 @@
 
 1.  **배포 및 테스트**
     - [ ] GitHub 푸시 및 자동 배포 확인
-    - [ ] 배포된 사이트에서 구글 로그인 정상 작동 확인 (팝업 유지 및 계정 선택 확인)
-    - [ ] 로그인 성공 후 리다이렉션 및 세션 유지 확인
+    - [ ] 배포된 사이트에서 구글 로그인 정상 작동 확인
+    - [ ] 전체적인 기능 점검 (기존 WizCoCo 기능이 AiCoCo 환경에서 정상 작동하는지)
 
 ---
 

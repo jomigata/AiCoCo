@@ -35,19 +35,19 @@ const requiredSecrets = [
     name: 'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN',
     description: 'Firebase Auth Domain',
     required: true,
-    example: 'wiz-coco.firebaseapp.com'
+    example: 'aicoco-5f8e6.firebaseapp.com'
   },
   {
     name: 'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
     description: 'Firebase Project ID',
     required: true,
-    example: 'wiz-coco'
+    example: 'aicoco-5f8e6'
   },
   {
     name: 'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET',
     description: 'Firebase Storage Bucket',
     required: true,
-    example: 'wiz-coco.appspot.com'
+    example: 'aicoco-5f8e6.appspot.com'
   },
   {
     name: 'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID',
