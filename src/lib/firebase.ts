@@ -1,7 +1,12 @@
-import { initializeApp, getApps } from 'firebase/app'
+import { initializeApp, getApps, type FirebaseApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
+import { getFunctions } from 'firebase/functions'
 import { getStorage } from 'firebase/storage'
+
+export const FUNCTIONS_REGION = 'asia-northeast3'
+/** Firestore Console에 생성한 데이터베이스 ID */
+export const FIRESTORE_DATABASE_ID = 'aicoco-db'
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,15 +17,15 @@ const firebaseConfig = {
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
-// Initialize Firebase
-let app
+let app: FirebaseApp
 if (!getApps().length) {
     app = initializeApp(firebaseConfig)
 } else {
-    app = getApps()[0]
+    app = getApps()[0]!
 }
 
 export const auth = getAuth(app)
-export const db = getFirestore(app)
+export const db = getFirestore(app, FIRESTORE_DATABASE_ID)
 export const storage = getStorage(app)
+export const functions = getFunctions(app, FUNCTIONS_REGION)
 export default app

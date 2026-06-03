@@ -12,7 +12,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "build:functions": "npm --prefix functions run build",
+    "deploy:firestore": "firebase deploy --only firestore",
+    "deploy:functions": "firebase deploy --only functions",
+    "deploy:hosting": "npm run build && firebase deploy --only hosting",
+    "deploy:all": "npm run build && firebase deploy --only firestore,functions,hosting"
   },
   "dependencies": {
     "next": "^14.1.0",

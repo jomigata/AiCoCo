@@ -1,10 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Heart, Brain, Users, Sparkles, ArrowRight, CheckCircle } from 'lucide-react'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function HomePage() {
+    const { user } = useAuth()
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
@@ -77,13 +80,19 @@ export default function HomePage() {
                             transition={{ delay: 0.5, duration: 0.8 }}
                             className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8"
                         >
-                            <button className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2">
+                            <Link
+                                href={user ? '/counsel/' : '/login/'}
+                                className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2"
+                            >
                                 상담 시작하기
                                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </button>
-                            <button className="px-8 py-4 bg-white/80 backdrop-blur-sm text-gray-700 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-200">
-                                자세히 알아보기
-                            </button>
+                            </Link>
+                            <Link
+                                href={user ? '/dashboard/' : '/signup/'}
+                                className="px-8 py-4 bg-white/80 backdrop-blur-sm text-gray-700 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-200"
+                            >
+                                {user ? '내 상담 보기' : '회원가입'}
+                            </Link>
                         </motion.div>
                     </motion.div>
                 </div>

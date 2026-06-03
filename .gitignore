@@ -108,6 +108,10 @@ firebase-debug.*.log
 !postcss.config.js
 !jest.config.js
 !firebase.json
+!firestore.indexes.json
 !.firebaserc
-!.eslintrc.json 
+!.eslintrc.json
+!functions/package.json
+!functions/tsconfig.json
 node_modules
+functions/lib/

@@ -1,0 +1,108 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function hasRole(role) {
+      return isSignedIn() && request.auth.token.role == role;
+    }
+
+    function isAdmin() {
+      return hasRole('admin');
+    }
+
+    function canAccessSession(sessionId) {
+      let session = get(/databases/$(database)/documents/sessions/$(sessionId));
+      return isSignedIn() && (
+        session.data.clientId == request.auth.uid
+        || session.data.counselorId == request.auth.uid
+        || isAdmin()
+      );
+    }
+
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow create: if isOwner(uid)
+        && request.resource.data.role == 'client'
+        && request.resource.data.status == 'active'
+        && request.resource.data.email is string
+        && request.resource.data.displayName is string;
+      allow update: if isOwner(uid)
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.status == resource.data.status;
+      allow delete: if false;
+    }
+
+    match /profiles/{uid} {
+      allow read, write: if isOwner(uid);
+    }
+
+    match /counselors/{counselorId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /sessions/{sessionId} {
+      allow read: if canAccessSession(sessionId);
+      allow create: if isSignedIn()
+        && request.resource.data.clientId == request.auth.uid
+        && request.resource.data.type in ['ai', 'human']
+        && request.resource.data.status in ['active', 'ended', 'escalated']
+        && request.resource.data.riskLevel in ['none', 'low', 'medium', 'high'];
+      allow update: if isSignedIn()
+        && resource.data.clientId == request.auth.uid
+        && request.resource.data.clientId == resource.data.clientId
+        && request.resource.data.type == resource.data.type;
+      allow delete: if false;
+
+      match /messages/{messageId} {
+        allow read: if canAccessSession(sessionId);
+        allow create: if canAccessSession(sessionId)
+          && request.resource.data.role == 'user'
+          && request.resource.data.content is string
+          && request.resource.data.content.size() > 0
+          && request.resource.data.content.size() <= 2000;
+        allow update, delete: if false;
+      }
+    }
+
+    match /bookings/{bookingId} {
+      allow read: if isSignedIn() && (
+        resource.data.clientId == request.auth.uid
+        || resource.data.counselorId == request.auth.uid
+        || isAdmin()
+      );
+      allow create: if isSignedIn()
+        && request.resource.data.clientId == request.auth.uid;
+      allow update: if isAdmin()
+        || (isSignedIn() && resource.data.counselorId == request.auth.uid);
+      allow delete: if false;
+    }
+
+    match /tests/{testId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /testResults/{resultId} {
+      allow read: if isSignedIn() && resource.data.clientId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.clientId == request.auth.uid;
+      allow update: if isSignedIn()
+        && resource.data.clientId == request.auth.uid;
+      allow delete: if false;
+    }
+
+    match /crisisEvents/{eventId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+  }
+}
