@@ -57,13 +57,12 @@
 | 4 | Functions 재배포 (코드 개선본) | 터미널 | `npm run deploy:functions` |
 | 5 | `/counsel/` AI 응답 E2E 테스트 | 브라우저 | |
 
-### P1 — 안정화
+### P1 — CI/CD 자동 배포
 | # | 작업 | 비고 |
 |---|------|------|
-| 6 | GitHub Secret `GEMINI_API_KEY` 등록 | CI 자동 배포 |
-| 7 | `ensureUserProfile` Functions 배포 | onUserCreate 대체 |
-| 8 | `onUserCreate` IAM 수정 (선택) | [GCP IAM](https://console.cloud.google.com/iam-admin/iam?project=aicoco-5f8e6) → Compute SA에 Storage Object Viewer |
-| 9 | Hosting 최신 빌드 재배포 | `npm run deploy:hosting` |
+| 6 | GitHub Secret `FIREBASE_TOKEN` 등록 | `firebase login:ci` 로 생성 |
+| 7 | GitHub Secret `GEMINI_API_KEY` 등록 | Functions CI용 (선택) |
+| 8 | `main` push → Actions 자동 실행 확인 | [Actions](https://github.com/jomigata/AiCoCo/actions) |
 
 ### P2 — 기능 확장 (미착수)
 | 항목 | 상태 |
