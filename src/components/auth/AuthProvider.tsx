@@ -12,8 +12,15 @@ import {
 import { onAuthStateChanged, type User } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { ensureUserProfile } from '@/lib/counsel/api'
-import type { AuthClaims } from '@/types/auth'
 import type { UserRole } from '@/types/auth'
+
+function getRoleFromClaims(claims: Record<string, unknown>): UserRole {
+  const role = claims.role
+  if (role === 'client' || role === 'counselor' || role === 'admin') {
+    return role
+  }
+  return 'client'
+}
 
 interface AuthContextValue {
   user: User | null
@@ -35,8 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return
     }
     const token = await auth.currentUser.getIdTokenResult(true)
-    const claims = token.claims as AuthClaims
-    setRole(claims.role ?? 'client')
+    setRole(getRoleFromClaims(token.claims as Record<string, unknown>))
   }, [])
 
   useEffect(() => {
@@ -50,8 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // Functions 미배포 시에도 기본 로그인은 유지
         }
         const token = await nextUser.getIdTokenResult()
-        const claims = token.claims as AuthClaims
-        setRole(claims.role ?? 'client')
+        setRole(getRoleFromClaims(token.claims as Record<string, unknown>))
       } else {
         setRole(null)
       }
