@@ -11,7 +11,7 @@ import {
   toGeminiHistory,
 } from '../utils/session'
 import { detectRisk } from '../safety/crisis'
-import { generateCounselReply } from '../gemini/client'
+import { classifyGeminiFailure, generateCounselReply } from '../gemini/client'
 import { CRISIS_SAFE_REPLY } from '../gemini/prompts'
 
 interface SendCounselMessageRequest {
@@ -95,22 +95,33 @@ export const sendCounselMessage = onCall<SendCounselMessageRequest>(
       reply = result.text
       modelUsed = result.modelId
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error'
-      logger.error('Gemini counsel reply failed', { message, uid, sessionId })
+      const failure = classifyGeminiFailure(err)
+      logger.error('Gemini counsel reply failed', {
+        kind: failure.kind,
+        message: failure.message,
+        uid,
+        sessionId,
+      })
 
-      if (message.includes('GEMINI_API_KEY')) {
+      if (failure.message.includes('GEMINI_API_KEY')) {
         throw new HttpsError(
           'failed-precondition',
           'AI 상담 서비스가 아직 설정되지 않았습니다. 관리자에게 문의하세요.'
         )
       }
-      if (/api key|apikey|401|403|permission/i.test(message)) {
+      if (failure.kind === 'quota') {
+        throw new HttpsError(
+          'resource-exhausted',
+          'AI 상담 API 사용 한도가 소진되었습니다. Google AI Studio에서 결제·크레딧을 충전한 뒤 다시 시도해 주세요.'
+        )
+      }
+      if (failure.kind === 'auth') {
         throw new HttpsError(
           'failed-precondition',
           'Gemini API 키가 유효하지 않습니다. Secret 갱신 후 Functions를 재배포해 주세요.'
         )
       }
-      if (/404|not found|model/i.test(message)) {
+      if (failure.kind === 'model') {
         throw new HttpsError(
           'internal',
           'AI 모델 호출에 실패했습니다. 잠시 후 다시 시도해 주세요.'

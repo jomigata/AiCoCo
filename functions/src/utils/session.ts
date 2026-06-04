@@ -56,12 +56,19 @@ export async function loadRecentMessages(sessionId: string, limit = 20) {
 export function toGeminiHistory(
   messages: Record<string, unknown>[]
 ): { role: 'user' | 'model'; parts: { text: string }[] }[] {
-  return messages
+  const history = messages
     .filter((m) => m.role === 'user' || m.role === 'assistant')
     .map((m) => ({
       role: m.role === 'user' ? ('user' as const) : ('model' as const),
       parts: [{ text: String(m.content) }],
     }))
+
+  // AI 응답 실패 후 남은 user 메시지는 Gemini history 규칙 위반 → 제거
+  while (history.length > 0 && history[history.length - 1].role === 'user') {
+    history.pop()
+  }
+
+  return history
 }
 
 export { db, FieldValue, Timestamp }

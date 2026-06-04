@@ -30,6 +30,29 @@ function toGeminiError(err: unknown): Error {
   return new Error(String(err))
 }
 
+/** HTTP 상태·본문 기반으로 재시도/사용자 안내용 오류 분류 */
+export function classifyGeminiFailure(err: unknown): {
+  kind: 'quota' | 'auth' | 'model' | 'history' | 'unknown'
+  message: string
+} {
+  const message = toGeminiError(err).message
+  const lower = message.toLowerCase()
+
+  if (/429|quota|rate limit|resource exhausted|depleted|billing|prepay/i.test(message)) {
+    return { kind: 'quota', message }
+  }
+  if (/api key|apikey|401|403|permission|invalid key/i.test(lower)) {
+    return { kind: 'auth', message }
+  }
+  if (/history|alternate|must be/i.test(lower)) {
+    return { kind: 'history', message }
+  }
+  if (/404|not found|model/i.test(lower)) {
+    return { kind: 'model', message }
+  }
+  return { kind: 'unknown', message }
+}
+
 export async function generateCounselReply(
   history: { role: 'user' | 'model'; parts: { text: string }[] }[],
   userMessage: string
