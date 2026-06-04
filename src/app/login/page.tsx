@@ -21,10 +21,21 @@ export default function LoginPage() {
 
     try {
       const cred = await signInWithEmailAndPassword(auth, email.trim().toLowerCase(), password)
-      await touchLastLogin(cred.user.uid)
+      try {
+        await touchLastLogin(cred.user.uid)
+      } catch {
+        // 로그인은 성공했으나 lastLogin 기록만 실패 — 상담 화면으로 진행
+      }
       router.replace('/counsel/')
-    } catch {
-      setError('이메일 또는 비밀번호를 확인해 주세요.')
+    } catch (err) {
+      const code = err && typeof err === 'object' && 'code' in err ? String((err as { code: string }).code) : ''
+      if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
+        setError('이메일 또는 비밀번호를 확인해 주세요.')
+      } else if (code === 'auth/too-many-requests') {
+        setError('시도 횟수가 많습니다. 잠시 후 다시 시도해 주세요.')
+      } else {
+        setError('로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.')
+      }
     } finally {
       setLoading(false)
     }
