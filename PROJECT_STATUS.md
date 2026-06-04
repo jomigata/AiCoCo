@@ -2,7 +2,7 @@
 
 **프로젝트:** AiCoCo — AI 심리상담 플랫폼  
 **Firebase:** `aicoco-5f8e6` · Firestore DB: `aicoco-db`  
-**최종 갱신:** 2026-05-31
+**최종 갱신:** 2026-06-04
 
 ---
 
@@ -11,89 +11,54 @@
 ### 인프라·배포
 | 항목 | 상태 |
 |------|------|
-| Firebase 프로젝트 연결 (Blaze) | ✅ |
-| Firestore DB `aicoco-db` 생성 | ✅ |
-| Firestore Rules / Indexes 파일 | ✅ |
-| `firebase deploy --only firestore` | ✅ (사용자 확인) |
-| Firebase Hosting (랜딩·로그인·상담 UI) | ✅ |
-| GitHub Actions 워크플로우 (Hosting+Functions+Firestore) | ✅ 코드 반영 |
+| Firebase Blaze | ✅ |
+| Firestore `aicoco-db` + Rules/Indexes | ✅ |
+| Functions 5종 배포 | ✅ |
+| Hosting (랜딩·로그인·상담 UI) | ✅ |
+| GitHub Actions CI/CD (#14 Success) | ✅ |
+| `FIREBASE_TOKEN` GitHub Secret | ✅ |
 
-### 인증·데이터
+### 인증·Functions·프론트
 | 항목 | 상태 |
-|------|
-| Authentication 이메일/비밀번호 | ✅ |
-| 회원가입 → `users` / `profiles` 저장 | ✅ |
-| Firestore Security Rules | ✅ |
-| TypeScript 타입 (`src/types/`) | ✅ |
-
-### Cloud Functions
-| 함수 | 상태 |
 |------|------|
-| `startAiSession` | ✅ 배포됨 |
-| `sendCounselMessage` | ✅ 배포됨 (Gemini 연동) |
-| `endAiSession` | ✅ 배포됨 |
-| `ensureUserProfile` | ✅ 코드 완료 (재배포 필요) |
-| `onUserCreate` | ⚠️ IAM 오류로 배포 실패 이력 |
-
-### 프론트엔드
-| 페이지 | 경로 | 상태 |
-|--------|------|------|
-| 랜딩 | `/` | ✅ |
-| 로그인 | `/login/` | ✅ |
-| 회원가입 | `/signup/` | ✅ |
-| AI 상담 | `/counsel/` | ✅ UI·연동 |
-| 내 상담 | `/dashboard/` | ✅ |
+| 이메일 회원가입/로그인 | ✅ |
+| `startAiSession` / `sendCounselMessage` / `endAiSession` | ✅ |
+| `ensureUserProfile` (onUserCreate 대체) | ✅ |
+| `/`, `/login/`, `/signup/`, `/counsel/`, `/dashboard/` | ✅ |
+| 로컬 `GEMINI_API_KEY` Secret | ✅ (사용자 설정) |
 
 ---
 
 ## ⏳ 미완료
 
-### P0 — 즉시 (AI 상담 500 오류)
-| # | 작업 | 담당 | 비고 |
-|---|------|------|------|
-| 1 | Generative Language API 활성화 | 콘솔 | [API Enable](https://console.cloud.google.com/apis/library/generativelanguage.googleapis.com?project=aicoco-5f8e6) |
-| 2 | AI Studio **AiCoCo** 프로젝트 새 API 키 | 콘솔 | [API Keys](https://aistudio.google.com/app/apikey) |
-| 3 | `GEMINI_API_KEY` Secret 갱신 (`--force`) | 터미널 | |
-| 4 | Functions 재배포 (코드 개선본) | 터미널 | `npm run deploy:functions` |
-| 5 | `/counsel/` AI 응답 E2E 테스트 | 브라우저 | |
-
-### P1 — CI/CD 자동 배포
-| # | 작업 | 비고 |
+### P0 — AI 상담 E2E 확인 (마지막 1건)
+| # | 작업 | 상태 |
 |---|------|------|
-| 6 | GitHub Secret `FIREBASE_TOKEN` 등록 | `firebase login:ci` 로 생성 |
-| 7 | GitHub Secret `GEMINI_API_KEY` 등록 | Functions CI용 (선택) |
-| 8 | `main` push → Actions 자동 실행 확인 | [Actions](https://github.com/jomigata/AiCoCo/actions) |
+| 5 | `/counsel/` 메시지 → AI 응답 확인 | 🔲 브라우저 테스트 필요 |
 
-### P2 — 기능 확장 (미착수)
-| 항목 | 상태 |
-|------|------|
-| Google 소셜 로그인 | ❌ |
-| 인간 상담사 예약 (`bookings`) | ❌ |
-| 심리 검사 (`tests` / `testResults`) | ❌ |
-| 관리자 대시보드 | ❌ |
-| FAQ / 문의 / 블로그 | ❌ |
+### P1 — CI 보완
+| # | 작업 | 상태 |
+|---|------|------|
+| 7 | GitHub Secret `GEMINI_API_KEY` | 🔲 미등록 (CI Secret 동기화용) |
+| 8 | `onUserCreate` IAM (선택) | 🔲 Storage Object Viewer |
+
+### P2 — 기능 확장 (다음 단계)
+| 우선순위 | 기능 |
+|----------|------|
+| 1 | Google 소셜 로그인 |
+| 2 | 심리 검사 (`tests` / `testResults`) |
+| 3 | 인간 상담 예약 (`bookings`) |
+| 4 | 관리자 대시보드 |
 
 ---
 
-## 🔧 P0 작업 명령 (순서대로)
+## 🔧 P0 #5 테스트 (지금)
 
-```powershell
-# 1) 프로젝트 폴더
-cd "e:\04. Cursor\AiCoCo"
+1. https://aicoco-5f8e6.web.app/counsel/ 로그인
+2. `오늘 기분이 가라앉아요` 전송
+3. **회색 AI 말풍선** 응답 확인
 
-# 2) gemini-key.txt에 새 키만 저장 (메모장, 빈 줄 없이)
-
-# 3) Secret 갱신
-firebase functions:secrets:set GEMINI_API_KEY --data-file gemini-key.txt --force
-Remove-Item gemini-key.txt
-
-# 4) Functions 빌드·배포
-npm run build:functions
-npm run deploy:functions
-
-# 5) (선택) 프론트+호스팅
-npm run deploy:hosting
-```
+실패 시: [Functions 로그](https://console.firebase.google.com/project/aicoco-5f8e6/functions/logs) → `sendCounselMessage`
 
 ---
 
@@ -101,26 +66,10 @@ npm run deploy:hosting
 
 | 용도 | URL |
 |------|-----|
-| 사이트 | https://aicoco-5f8e6.web.app |
 | AI 상담 | https://aicoco-5f8e6.web.app/counsel/ |
-| Functions 로그 | https://console.firebase.google.com/project/aicoco-5f8e6/functions/logs |
-| Firestore | https://console.firebase.google.com/project/aicoco-5f8e6/firestore/databases/aicoco-db/data |
 | GitHub Actions | https://github.com/jomigata/AiCoCo/actions |
 | GitHub Secrets | https://github.com/jomigata/AiCoCo/settings/secrets/actions |
 
 ---
 
-## 📁 코드 구조 (요약)
-
-```
-AiCoCo/
-├── src/app/          # login, signup, counsel, dashboard
-├── src/lib/          # firebase, counsel API, firestore helpers
-├── functions/src/    # Callable + Gemini + Auth
-├── firestore.rules
-└── firebase.json
-```
-
----
-
-**다음 마일스톤:** P0 완료 → AI 상담 정상 응답 확인 → P2 기능 우선순위 결정
+**다음 마일스톤:** P0 #5 E2E 확인 → P2 Google 로그인

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { AuthProvider } from '@/components/auth/AuthProvider'
+import { AppHeader } from '@/components/layout/AppHeader'
+import { CrisisBanner } from '@/components/layout/CrisisBanner'
 import '../styles/globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -22,7 +24,11 @@ export default function RootLayout({
         <html lang="ko">
             <body className={inter.className}>
                 <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-                    <AuthProvider>{children}</AuthProvider>
+                    <AuthProvider>
+                        <AppHeader />
+                        <CrisisBanner />
+                        {children}
+                    </AuthProvider>
                 </div>
             </body>
         </html>
