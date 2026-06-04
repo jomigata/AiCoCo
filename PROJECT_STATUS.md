@@ -34,7 +34,8 @@
 ### P0 — AI 상담 E2E (Gemini 결제 필요)
 | # | 작업 | 상태 |
 |---|------|------|
-| 5 | `/counsel/` 메시지 → AI 응답 | ⚠️ **Gemini 선불 크레딧 소진(429)** — [AI Studio](https://aistudio.google.com/)에서 충전 후 재시도 |
+| 5 | `/counsel/` 메시지 → AI 응답 | ✅ 동작 확인 (Gemini Prepaid 충전 후) |
+| 6 | 상담 자료 RAG (Sheets/Cloud Storage) | 🔲 미구현 — Flash-Lite + 청크 검색 권장 |
 
 ### P1 — CI 보완
 | # | 작업 | 상태 |

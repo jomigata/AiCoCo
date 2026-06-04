@@ -1,10 +1,12 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { SYSTEM_PROMPT } from './prompts'
 
+/** 비용 우선: Flash-Lite ($0.10/$0.40 per 1M) → Flash ($0.30/$2.50) 폴백 */
+export const DEFAULT_COUNSEL_MODEL = 'gemini-2.5-flash-lite'
+
 const MODEL_CANDIDATES = [
+  'gemini-2.5-flash-lite',
   'gemini-2.5-flash',
-  'gemini-2.0-flash',
-  'gemini-2.0-flash-001',
   'gemini-1.5-flash',
   'gemini-1.5-flash-latest',
 ]

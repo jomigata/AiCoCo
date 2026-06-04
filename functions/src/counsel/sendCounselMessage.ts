@@ -11,7 +11,11 @@ import {
   toGeminiHistory,
 } from '../utils/session'
 import { detectRisk } from '../safety/crisis'
-import { classifyGeminiFailure, generateCounselReply } from '../gemini/client'
+import {
+  classifyGeminiFailure,
+  DEFAULT_COUNSEL_MODEL,
+  generateCounselReply,
+} from '../gemini/client'
 import { CRISIS_SAFE_REPLY } from '../gemini/prompts'
 
 interface SendCounselMessageRequest {
@@ -88,7 +92,7 @@ export const sendCounselMessage = onCall<SendCounselMessageRequest>(
     })
 
     let reply: string
-    let modelUsed = 'gemini-2.5-flash'
+    let modelUsed = DEFAULT_COUNSEL_MODEL
     try {
       const history = toGeminiHistory(historyMessages)
       const result = await generateCounselReply(history, content)
