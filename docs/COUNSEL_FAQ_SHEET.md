@@ -23,12 +23,16 @@ AiCoCo는 **Google Sheets**에 정리한 상담 FAQ를 Firestore에 동기화한
 
 ## 3. Firebase Functions 환경 변수
 
-`functions/.env` 또는 배포 시 설정:
+`functions/.env` 또는 GitHub Actions Secrets:
 
 ```env
 COUNSEL_FAQ_SHEET_ID=스프레드시트_ID
 COUNSEL_FAQ_SHEET_GID=0
 ```
+
+**CI/CD:** [GitHub Secrets](https://github.com/jomigata/AiCoCo/settings/secrets/actions)에  
+`COUNSEL_FAQ_SHEET_ID`, `COUNSEL_FAQ_SHEET_GID`(선택)를 등록하면 배포 시 자동 반영됩니다.  
+미등록 시 `unset`으로 배포되며 FAQ 동기화는 스킵됩니다.
 
 로컬 배포 예:
 

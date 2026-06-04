@@ -1,4 +1,8 @@
-import { counselFaqSheetGid, counselFaqSheetId } from '../config/params'
+import {
+  counselFaqSheetGid,
+  counselFaqSheetId,
+  isCounselFaqSheetConfigured,
+} from '../config/params'
 import type { CounselFaqRow } from './types'
 
 const HEADER_ALIASES: Record<string, 'category' | 'keywords' | 'answerTemplate'> = {
@@ -112,7 +116,7 @@ export function rowsToFaqEntries(grid: string[][]): CounselFaqRow[] {
 
 export function getSheetCsvUrl(): string {
   const id = counselFaqSheetId.value().trim()
-  if (!id) {
+  if (!isCounselFaqSheetConfigured(id)) {
     throw new Error('COUNSEL_FAQ_SHEET_ID가 설정되지 않았습니다.')
   }
   const gid = counselFaqSheetGid.value().trim() || '0'

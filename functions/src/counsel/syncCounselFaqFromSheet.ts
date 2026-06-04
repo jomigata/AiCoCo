@@ -3,14 +3,14 @@ import { onSchedule } from 'firebase-functions/v2/scheduler'
 import * as logger from 'firebase-functions/logger'
 import { requireAdmin } from '../utils/auth'
 import { syncCounselFaqFromSheetInternal } from '../knowledge/sync'
-import { counselFaqSheetId } from '../config/params'
+import { isCounselFaqSheetConfigured } from '../config/params'
 
 export const syncCounselFaqFromSheet = onCall(
   { region: 'asia-northeast3' },
   async (request) => {
     requireAdmin(request)
 
-    if (!counselFaqSheetId.value().trim()) {
+    if (!isCounselFaqSheetConfigured()) {
       throw new HttpsError(
         'failed-precondition',
         'COUNSEL_FAQ_SHEET_ID 환경 변수를 설정한 뒤 Functions를 재배포하세요.'
@@ -35,7 +35,7 @@ export const scheduledSyncCounselFaq = onSchedule(
     timeZone: 'Asia/Seoul',
   },
   async () => {
-    if (!counselFaqSheetId.value().trim()) {
+    if (!isCounselFaqSheetConfigured()) {
       logger.warn('scheduledSyncCounselFaq skipped: COUNSEL_FAQ_SHEET_ID not set')
       return
     }
