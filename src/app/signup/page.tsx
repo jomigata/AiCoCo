@@ -27,15 +27,12 @@ export default function SignupPage() {
     setError(null)
 
     try {
-      const cred = await createUserWithEmailAndPassword(
-        auth,
-        email.trim(),
-        password
-      )
+      const normalizedEmail = email.trim().toLowerCase()
+      const cred = await createUserWithEmailAndPassword(auth, normalizedEmail, password)
       await updateProfile(cred.user, { displayName: displayName.trim() })
       await createUserDocuments({
         uid: cred.user.uid,
-        email: email.trim(),
+        email: normalizedEmail,
         displayName: displayName.trim(),
       })
       await cred.user.getIdToken(true)
@@ -45,7 +42,7 @@ export default function SignupPage() {
       if (code === 'auth/email-already-in-use') {
         setError('이미 사용 중인 이메일입니다.')
       } else if (code === 'auth/weak-password') {
-        setError('비밀번호는 6자 이상이어야 합니다.')
+        setError('비밀번호는 8자 이상이어야 합니다.')
       } else {
         setError('회원가입에 실패했습니다. 잠시 후 다시 시도해 주세요.')
       }
@@ -58,7 +55,7 @@ export default function SignupPage() {
     <main className="min-h-screen flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-md bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-gray-100 p-8">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">회원가입</h1>
-        <p className="text-gray-600 text-sm mb-8">AiCoCo에 오신 것을 환영합니다</p>
+        <p className="text-gray-600 text-sm mb-8">이메일 아이디와 비밀번호로 가입하세요</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -76,13 +73,13 @@ export default function SignupPage() {
           </div>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              이메일
+              이메일 (아이디)
             </label>
             <input
               id="email"
               type="email"
               required
-              autoComplete="email"
+              autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -96,7 +93,7 @@ export default function SignupPage() {
               id="password"
               type="password"
               required
-              minLength={6}
+              minLength={8}
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

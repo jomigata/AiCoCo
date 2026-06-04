@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
-import { signInWithGoogle } from '@/lib/auth/googleSignIn'
 import { touchLastLogin } from '@/lib/firestore/users'
 
 export default function LoginPage() {
@@ -14,7 +13,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [googleLoading, setGoogleLoading] = useState(false)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -22,7 +20,7 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      const cred = await signInWithEmailAndPassword(auth, email.trim(), password)
+      const cred = await signInWithEmailAndPassword(auth, email.trim().toLowerCase(), password)
       await touchLastLogin(cred.user.uid)
       router.replace('/counsel/')
     } catch {
@@ -32,39 +30,22 @@ export default function LoginPage() {
     }
   }
 
-  async function handleGoogleSignIn() {
-    setGoogleLoading(true)
-    setError(null)
-
-    try {
-      await signInWithGoogle()
-      router.replace('/counsel/')
-    } catch (err) {
-      const code = err && typeof err === 'object' && 'code' in err ? String((err as { code: string }).code) : ''
-      if (code !== 'auth/popup-closed-by-user') {
-        setError('Google 로그인에 실패했습니다. 다시 시도해 주세요.')
-      }
-    } finally {
-      setGoogleLoading(false)
-    }
-  }
-
   return (
     <main className="min-h-screen flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-md bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-gray-100 p-8">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">로그인</h1>
-        <p className="text-gray-600 text-sm mb-8">AiCoCo AI 상담을 시작하세요</p>
+        <p className="text-gray-600 text-sm mb-8">이메일 아이디와 비밀번호로 로그인하세요</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              이메일
+              이메일 (아이디)
             </label>
             <input
               id="email"
               type="email"
               required
-              autoComplete="email"
+              autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -89,27 +70,12 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            disabled={loading || googleLoading}
+            disabled={loading}
             className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold disabled:opacity-60"
           >
             {loading ? '로그인 중...' : '로그인'}
           </button>
         </form>
-
-        <div className="my-6 flex items-center gap-3">
-          <div className="h-px flex-1 bg-gray-200" />
-          <span className="text-xs text-gray-400">또는</span>
-          <div className="h-px flex-1 bg-gray-200" />
-        </div>
-
-        <button
-          type="button"
-          onClick={handleGoogleSignIn}
-          disabled={loading || googleLoading}
-          className="w-full py-3 rounded-xl border border-gray-200 bg-white text-gray-700 font-medium text-sm hover:bg-gray-50 disabled:opacity-60"
-        >
-          {googleLoading ? 'Google 로그인 중...' : 'Google로 로그인'}
-        </button>
 
         <p className="mt-6 text-center text-sm text-gray-600">
           계정이 없으신가요?{' '}
