@@ -35,7 +35,7 @@
 | # | 작업 | 상태 |
 |---|------|------|
 | 5 | `/counsel/` 메시지 → AI 응답 | ✅ 동작 확인 (Gemini Prepaid 충전 후) |
-| 6 | 상담 자료 RAG (Sheets/Cloud Storage) | 🔲 미구현 — Flash-Lite + 청크 검색 권장 |
+| 6 | Sheets FAQ 동기화 (`syncCounselFaqFromSheet`) | ✅ 코드 완료 — `COUNSEL_FAQ_SHEET_ID` 설정·시트 공개·동기화 필요 |
 
 ### P1 — CI 보완
 | # | 작업 | 상태 |

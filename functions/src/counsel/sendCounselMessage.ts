@@ -17,6 +17,7 @@ import {
   generateCounselReply,
 } from '../gemini/client'
 import { CRISIS_SAFE_REPLY } from '../gemini/prompts'
+import { formatFaqKnowledgeContext, searchCounselFaqs } from '../knowledge/search'
 
 interface SendCounselMessageRequest {
   sessionId: string
@@ -95,7 +96,9 @@ export const sendCounselMessage = onCall<SendCounselMessageRequest>(
     let modelUsed = DEFAULT_COUNSEL_MODEL
     try {
       const history = toGeminiHistory(historyMessages)
-      const result = await generateCounselReply(history, content)
+      const matchedFaqs = await searchCounselFaqs(content)
+      const knowledgeContext = formatFaqKnowledgeContext(matchedFaqs)
+      const result = await generateCounselReply(history, content, { knowledgeContext })
       reply = result.text
       modelUsed = result.modelId
     } catch (err) {

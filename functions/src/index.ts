@@ -9,3 +9,7 @@ export { ensureUserProfile } from './auth/ensureUserProfile'
 export { startAiSession } from './counsel/startAiSession'
 export { sendCounselMessage } from './counsel/sendCounselMessage'
 export { endAiSession } from './counsel/endAiSession'
+export {
+  syncCounselFaqFromSheet,
+  scheduledSyncCounselFaq,
+} from './counsel/syncCounselFaqFromSheet'

@@ -7,6 +7,7 @@ import type {
   SendCounselMessageResponse,
   StartAiSessionRequest,
   StartAiSessionResponse,
+  SyncCounselFaqResponse,
 } from '@/types/counsel-api'
 
 export async function startAiSession(title?: string) {
@@ -33,6 +34,15 @@ export async function endAiSession(sessionId: string) {
     'endAiSession'
   )
   const { data } = await fn({ sessionId })
+  return data
+}
+
+export async function syncCounselFaqFromSheet() {
+  const fn = httpsCallable<void, SyncCounselFaqResponse>(
+    functions,
+    'syncCounselFaqFromSheet'
+  )
+  const { data } = await fn()
   return data
 }
 

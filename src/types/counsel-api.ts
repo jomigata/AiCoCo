@@ -27,3 +27,9 @@ export interface EndAiSessionRequest {
 export interface EndAiSessionResponse {
   summary: string
 }
+
+export interface SyncCounselFaqResponse {
+  ok: boolean
+  synced: number
+  deleted: number
+}

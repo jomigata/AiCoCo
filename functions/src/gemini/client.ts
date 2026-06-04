@@ -57,15 +57,19 @@ export function classifyGeminiFailure(err: unknown): {
 
 export async function generateCounselReply(
   history: { role: 'user' | 'model'; parts: { text: string }[] }[],
-  userMessage: string
+  userMessage: string,
+  options?: { knowledgeContext?: string }
 ): Promise<{ text: string; modelId: string }> {
   let lastError: Error | null = null
+  const prompt = options?.knowledgeContext
+    ? `${options.knowledgeContext}\n\n---\n\n[사용자 메시지]\n${userMessage}`
+    : userMessage
 
   for (const modelId of MODEL_CANDIDATES) {
     try {
       const model = getGeminiModel(modelId)
       const chat = model.startChat({ history })
-      const result = await chat.sendMessage(userMessage)
+      const result = await chat.sendMessage(prompt)
       return { text: result.response.text(), modelId }
     } catch (err) {
       lastError = toGeminiError(err)
