@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
+import { signInWithGoogle } from '@/lib/auth/googleSignIn'
 import { touchLastLogin } from '@/lib/firestore/users'
 
 export default function LoginPage() {
@@ -13,6 +14,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -27,6 +29,23 @@ export default function LoginPage() {
       setError('이메일 또는 비밀번호를 확인해 주세요.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function handleGoogleSignIn() {
+    setGoogleLoading(true)
+    setError(null)
+
+    try {
+      await signInWithGoogle()
+      router.replace('/counsel/')
+    } catch (err) {
+      const code = err && typeof err === 'object' && 'code' in err ? String((err as { code: string }).code) : ''
+      if (code !== 'auth/popup-closed-by-user') {
+        setError('Google 로그인에 실패했습니다. 다시 시도해 주세요.')
+      }
+    } finally {
+      setGoogleLoading(false)
     }
   }
 
@@ -70,12 +89,27 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || googleLoading}
             className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold disabled:opacity-60"
           >
             {loading ? '로그인 중...' : '로그인'}
           </button>
         </form>
+
+        <div className="my-6 flex items-center gap-3">
+          <div className="h-px flex-1 bg-gray-200" />
+          <span className="text-xs text-gray-400">또는</span>
+          <div className="h-px flex-1 bg-gray-200" />
+        </div>
+
+        <button
+          type="button"
+          onClick={handleGoogleSignIn}
+          disabled={loading || googleLoading}
+          className="w-full py-3 rounded-xl border border-gray-200 bg-white text-gray-700 font-medium text-sm hover:bg-gray-50 disabled:opacity-60"
+        >
+          {googleLoading ? 'Google 로그인 중...' : 'Google로 로그인'}
+        </button>
 
         <p className="mt-6 text-center text-sm text-gray-600">
           계정이 없으신가요?{' '}

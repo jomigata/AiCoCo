@@ -17,7 +17,8 @@
     "deploy:firestore": "firebase deploy --only firestore",
     "deploy:functions": "firebase deploy --only functions",
     "deploy:hosting": "npm run build && firebase deploy --only hosting",
-    "deploy:all": "npm run build && firebase deploy --only firestore,functions,hosting"
+    "deploy:all": "npm run build && firebase deploy --only firestore,functions,hosting",
+    "bootstrap:admin": "node scripts/bootstrap-admin.mjs"
   },
   "dependencies": {
     "next": "^14.1.0",
